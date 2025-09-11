@@ -12,7 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDTO saveUser(UserDTO userDTO) {
@@ -25,6 +25,9 @@ public class UserServiceImpl implements UserService {
             existingUser.setPhotoUrl(userDTO.getPhotoUrl());
             if(userDTO.getCredits() != null) {
                 existingUser.setCredits(userDTO.getCredits());
+            } else {
+                // Keep existing credits if not provided in DTO
+                existingUser.setCredits(existingUser.getCredits());
             }
             existingUser = userRepository.save(existingUser);
             return mapToDTO(existingUser);
