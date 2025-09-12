@@ -4,6 +4,7 @@ import com.sai.BGClear.dto.UserDTO;
 import com.sai.BGClear.entity.UserEntity;
 import com.sai.BGClear.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -35,6 +36,20 @@ public class UserServiceImpl implements UserService {
         UserEntity newUser = mapToEntity(userDTO);
         userRepository.save(newUser);
         return mapToDTO(newUser);
+    }
+
+    @Override
+    public UserDTO getUserByClerkId(String clerkId) {
+        UserEntity userEntity = userRepository.findByClerkId(clerkId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with clerkId: " + clerkId));
+        return mapToDTO(userEntity);
+    }
+
+    @Override
+    public void deleteUserByClerkId(String clerkId) {
+        UserEntity userEntity = userRepository.findByClerkId(clerkId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with clerkId: " + clerkId));
+        userRepository.delete(userEntity);
     }
 
     private UserEntity mapToEntity(UserDTO userDTO){
